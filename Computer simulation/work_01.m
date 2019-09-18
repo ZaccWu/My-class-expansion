@@ -1,4 +1,4 @@
-function [T, S, i] = work(N)
+function [T, S, i] = work_01(N)
     T = -1;
     S = 0;
     t = ones(N, 1) * -1;    % time 

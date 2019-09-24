@@ -35,3 +35,29 @@ hist(y1,breaks=bk1)
 hist(y2,breaks=bk1)
 hist(y3,breaks=bk2)
 hist(y4,breaks=bk1)
+
+# CLT with sampling times
+set.seed(1)
+x1<-rep(0,10)
+x2<-rep(0,100)
+x3<-rep(0,1000)
+x4<-rep(0,10000)
+for (i in 1:10){
+  x1[i]<-mean(runif(100,0,1))
+}
+for (i in 1:100){
+  x2[i]<-mean(runif(100,0,1))
+}
+for (i in 1:1000){
+  x3[i]<-mean(runif(100,0,1))
+}
+for (i in 1:10000){
+  x4[i]<-mean(runif(100,0,1))
+}
+bk3<-seq(0,1,0.01)
+
+par(mfrow=c(2,2))
+hist(x1,breaks=bk3)
+hist(x2,breaks=bk3)
+hist(x3,breaks=bk3)
+hist(x4,breaks=bk3)

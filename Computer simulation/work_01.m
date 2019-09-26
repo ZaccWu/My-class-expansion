@@ -1,3 +1,5 @@
+% charging function
+
 function [T, S, i] = work_01(N)
     T = -1;
     S = 0;

@@ -1,5 +1,5 @@
 function NB_iris(df)
-    % description: clasify iris using NB algorithm
+    % description: classify iris using NB algorithm
     % requirement: the input of the function will be a dataset(a matrix with 4 feature columns and 1 target column)
     % in this case there are 3 differnet targets
     

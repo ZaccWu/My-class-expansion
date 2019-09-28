@@ -31,13 +31,13 @@ select action as action_count, count(*) as times from b_emails group by action o
 select event_type as event_type_count, count(*) as times from b_events group by event_type order by times desc
 select event_name as event_name_count, count(*) as times from b_events group by event_name order by times desc
 select company_id as comid_count, count(*) as times from b_users group by company_id order by times desc
--- 是否active和language的关系
+-- 统计每个language中active和pending的总数
 select language,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
 from y_users group by language
 order by active desc,pending desc
--- 是否active和company_id的关系
+-- 统计每个company_id中active和pending的总数
 select company_id,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending

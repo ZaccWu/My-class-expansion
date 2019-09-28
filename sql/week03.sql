@@ -93,3 +93,10 @@ count(case when event_name='search_run' then event_name else null end) as search
 count(case when event_name='create_user' then event_name else null end) as create_user,
 count(case when event_name='enter_email' then event_name else null end) as enter_email
 from b_events group by time_id,period_id order by time_id
+
+-- user_type的变化
+select period_id, time_id,
+count(case when user_type=1 then user_type else null end) as type1,
+count(case when user_type=2 then user_type else null end) as type2,
+count(case when user_type=3 then user_type else null end) as type3
+from b_emails group by time_id,period_id order by time_id

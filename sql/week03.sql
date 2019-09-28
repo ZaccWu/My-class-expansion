@@ -35,13 +35,13 @@ select company_id as comid_count, count(*) as times from b_users group by compan
 select language,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
-from y_users group by language
+from b_users group by language
 order by active desc,pending desc
 -- 统计每个company_id中active和pending的总数
 select company_id,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
-from y_users group by company_id
+from b_users group by company_id
 order by active desc,pending desc
 -- 统计每个period_id中用户总数的变化（去除重复）
 select period_id,
@@ -50,3 +50,8 @@ from b_events group by period_id order by period_id
 select period_id,
 count(distinct user_id) as num_users
 from b_emails group by period_id order by period_id
+-- 分别统计每个period_id中注册的active和panding用户
+select period_id, time_id,
+count(case when state='active' then state else null end) as active_users,
+count(case when state='pending' then state else null end) as pending_users
+from b_users group by time_id,period_id order by time_id

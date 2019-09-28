@@ -94,14 +94,14 @@ count(case when event_name='create_user' then event_name else null end) as creat
 count(case when event_name='enter_email' then event_name else null end) as enter_email
 from b_events group by time_id,period_id order by time_id
 
--- user_type的变化
+-- user_type的变化（每周）
 select period_id, time_id,
 count(case when user_type=1 then user_type else null end) as type1,
 count(case when user_type=2 then user_type else null end) as type2,
 count(case when user_type=3 then user_type else null end) as type3
 from b_emails group by time_id,period_id order by time_id
 
--- device的变化
+-- device的变化（每周）
 select period_id, time_id,
 count(case when device='samsung galaxy s4' then device else null end) as d1,
 count(case when device='nexus 5' then device else null end) as d2,
@@ -131,7 +131,7 @@ count(case when device='dell inspiron notebook' then device else null end) as d2
 count(case when device='ipad mini' then device else null end) as d26
 from b_events group by time_id,period_id order by time_id
 
--- 各种品牌的数量变化
+-- 各种品牌的数量变化（每周）
 select period_id, time_id,
 count(case when device='acer aspire notebood' or device='acer aspire desktop' then device else null end) as acer,
 count(case when device='asus chromebook' then device else null end) as asus,
@@ -150,3 +150,50 @@ count(case when device='nokia lumia 635' then device else null end) as nokia,
 count(case when device='samsung galaxy s4' or device='samsung galaxy note' or device='samsung galaxy tablet' then device else null end) as samsumg
 from b_events group by time_id,period_id order by time_id
 
+-- 不同时段注册用户的活跃度变化（每天）
+select date,
+count(case when user_id>=1 and user_id<=331 then user_id else null end) as r1,
+count(case when user_id>=332 and user_id<=659 then user_id else null end) as r2,
+count(case when user_id>=660 and user_id<=1042 then user_id else null end) as r3,
+count(case when user_id>=1043 and user_id<=1452 then user_id else null end) as r4,
+count(case when user_id>=1453 and user_id<=1938 then user_id else null end) as r5,
+count(case when user_id>=1939 and user_id<=2423 then user_id else null end) as r6,
+count(case when user_id>=2424 and user_id<=3031 then user_id else null end) as r7,
+count(case when user_id>=3032 and user_id<=3667 then user_id else null end) as r8,
+count(case when user_id>=3668 and user_id<=4366 then user_id else null end) as r9,
+count(case when user_id>=4367 and user_id<=5192 then user_id else null end) as r10,
+count(case when user_id>=5193 and user_id<=6008 then user_id else null end) as r11,
+count(case when user_id>=6009 and user_id<=6980 then user_id else null end) as r12,
+count(case when user_id>=6981 and user_id<=8063 then user_id else null end) as r13,
+count(case when user_id>=8064 and user_id<=9117 then user_id else null end) as r14,
+count(case when user_id>=9118 and user_id<=10348 then user_id else null end) as r15,
+count(case when user_id>=10349 and user_id<=11767 then user_id else null end) as r16,
+count(case when user_id>=11768 and user_id<=13364 then user_id else null end) as r17,
+count(case when user_id>=13365 and user_id<=15092 then user_id else null end) as r18,
+count(case when user_id>=15093 and user_id<=17075 then user_id else null end) as r19,
+count(case when user_id>=17076 and user_id<=19065 then user_id else null end) as r20
+from b_events group by date order by date
+
+-- 不同时段注册用户的活跃度变化（每周）
+select time_id, period_id,
+count(case when user_id>=1 and user_id<=331 then user_id else null end) as r1,
+count(case when user_id>=332 and user_id<=659 then user_id else null end) as r2,
+count(case when user_id>=660 and user_id<=1042 then user_id else null end) as r3,
+count(case when user_id>=1043 and user_id<=1452 then user_id else null end) as r4,
+count(case when user_id>=1453 and user_id<=1938 then user_id else null end) as r5,
+count(case when user_id>=1939 and user_id<=2423 then user_id else null end) as r6,
+count(case when user_id>=2424 and user_id<=3031 then user_id else null end) as r7,
+count(case when user_id>=3032 and user_id<=3667 then user_id else null end) as r8,
+count(case when user_id>=3668 and user_id<=4366 then user_id else null end) as r9,
+count(case when user_id>=4367 and user_id<=5192 then user_id else null end) as r10,
+count(case when user_id>=5193 and user_id<=6008 then user_id else null end) as r11,
+count(case when user_id>=6009 and user_id<=6980 then user_id else null end) as r12,
+count(case when user_id>=6981 and user_id<=8063 then user_id else null end) as r13,
+count(case when user_id>=8064 and user_id<=9117 then user_id else null end) as r14,
+count(case when user_id>=9118 and user_id<=10348 then user_id else null end) as r15,
+count(case when user_id>=10349 and user_id<=11767 then user_id else null end) as r16,
+count(case when user_id>=11768 and user_id<=13364 then user_id else null end) as r17,
+count(case when user_id>=13365 and user_id<=15092 then user_id else null end) as r18,
+count(case when user_id>=15093 and user_id<=17075 then user_id else null end) as r19,
+count(case when user_id>=17076 and user_id<=19065 then user_id else null end) as r20
+from b_events group by time_id,period_id order by time_id

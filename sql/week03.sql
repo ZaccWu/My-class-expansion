@@ -43,3 +43,10 @@ count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
 from y_users group by company_id
 order by active desc,pending desc
+-- 统计每个period_id中用户总数的变化（去除重复）
+select period_id,
+count(distinct user_id) as num_users
+from b_events group by period_id order by period_id
+select period_id,
+count(distinct user_id) as num_users
+from b_emails group by period_id order by period_id

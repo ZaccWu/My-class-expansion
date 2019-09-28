@@ -55,3 +55,8 @@ select period_id, time_id,
 count(case when state='active' then state else null end) as active_users,
 count(case when state='pending' then state else null end) as pending_users
 from b_users group by time_id,period_id order by time_id
+-- 分别统计每天注册的active和panding用户
+select date, period_id, time_id,
+count(case when state='active' then state else null end) as active_users,
+count(case when state='pending' then state else null end) as pending_users
+from b_users group by date,time_id,period_id order by date

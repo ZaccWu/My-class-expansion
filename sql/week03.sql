@@ -31,18 +31,21 @@ select action as action_count, count(*) as times from b_emails group by action o
 select event_type as event_type_count, count(*) as times from b_events group by event_type order by times desc
 select event_name as event_name_count, count(*) as times from b_events group by event_name order by times desc
 select company_id as comid_count, count(*) as times from b_users group by company_id order by times desc
+
 -- 统计每个language中active和pending的总数
 select language,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
 from b_users group by language
 order by active desc,pending desc
+
 -- 统计每个company_id中active和pending的总数
 select company_id,
 count(case when state='active' then state else null end) as active,
 count(case when state='pending' then state else null end) as pending
 from b_users group by company_id
 order by active desc,pending desc
+
 -- 统计每个period_id中用户总数的变化（去除重复）
 select period_id,
 count(distinct user_id) as num_users
@@ -57,11 +60,13 @@ select period_id, time_id,
 count(case when state='active' then state else null end) as active_users,
 count(case when state='pending' then state else null end) as pending_users
 from b_users group by time_id,period_id order by time_id
+
 -- 分别统计每天注册的active和panding用户
 select date, period_id, time_id,
 count(case when state='active' then state else null end) as active_users,
 count(case when state='pending' then state else null end) as pending_users
 from b_users group by date,time_id,period_id order by date
+
 -- emails中各类action的数量变化（每周）
 select period_id, time_id,
 count(case when action='sent_weekly_digest' then action else null end) as sent_weekly_digest,
@@ -69,11 +74,13 @@ count(case when action='email_open' then action else null end) as email_open,
 count(case when action='email_clickthrough' then action else null end) as email_clickthrough,
 count(case when action='sent_reengagement_email' then action else null end) as sent_reengagement_email
 from b_emails group by time_id,period_id order by time_id
+
 -- event_type中的数量变化（每周）
 select period_id, time_id,
 count(case when event_type='engagement' then event_type else null end) as engagement,
 count(case when event_type='signup_flow' then event_type else null end) as signup_flow
 from b_events group by time_id,period_id order by time_id
+
 -- event_name的数量变化（每周）
 select period_id, time_id,
 count(case when event_name='home_page' then event_name else null end) as home_page,

@@ -100,3 +100,53 @@ count(case when user_type=1 then user_type else null end) as type1,
 count(case when user_type=2 then user_type else null end) as type2,
 count(case when user_type=3 then user_type else null end) as type3
 from b_emails group by time_id,period_id order by time_id
+
+-- device的变化
+select period_id, time_id,
+count(case when device='samsung galaxy s4' then device else null end) as d1,
+count(case when device='nexus 5' then device else null end) as d2,
+count(case when device='iphone 5s' then device else null end) as d3,
+count(case when device='dell inspiron desktop' then device else null end) as d4,
+count(case when device='iphone 4s' then device else null end) as d5,
+count(case when device='asus chromebook' then device else null end) as d6,
+count(case when device='ipad air' then device else null end) as d7,
+count(case when device='acer aspire notebook' then device else null end) as d8,
+count(case when device='hp pavilion desktop' then device else null end) as d9,
+count(case when device='macbook pro' then device else null end) as d10,
+count(case when device='lenovo thinkpad' then device else null end) as d11,
+count(case when device='macbook air' then device else null end) as d12,
+count(case when device='nexus 7' then device else null end) as d13,
+count(case when device='mac mini' then device else null end) as d14,
+count(case when device='htc one' then device else null end) as d15,
+count(case when device='kindle fire' then device else null end) as d16,
+count(case when device='windows surface' then device else null end) as d17,
+count(case when device='samsung galaxy note' then device else null end) as d18,
+count(case when device='amazon fire phone' then device else null end) as d19,
+count(case when device='samsumg galaxy tablet' then device else null end) as d20,
+count(case when device='nokia lumia 635' then device else null end) as d21,
+count(case when device='nexus 10' then device else null end) as d22,
+count(case when device='acer aspire desktop' then device else null end) as d23,
+count(case when device='iphone 5' then device else null end) as d24,
+count(case when device='dell inspiron notebook' then device else null end) as d25,
+count(case when device='ipad mini' then device else null end) as d26
+from b_events group by time_id,period_id order by time_id
+
+-- 各种品牌的数量变化
+select period_id, time_id,
+count(case when device='acer aspire notebood' or device='acer aspire desktop' then device else null end) as acer,
+count(case when device='asus chromebook' then device else null end) as asus,
+count(case when device='dell inspiron notebook' or device='dell inspiron desktop' then device else null end) as dell,
+count(case when device='amazon fire phone' then device else null end) as fire,
+count(case when device='hp pavilion desktop' then device else null end) as hp,
+count(case when device='htc one' then device else null end) as htc,
+count(case when device='ipad air' or device='ipad mini' then device else null end) as ipad,
+count(case when device='iphone 5' or device='iphone 5s' or device='iphone 4s' then device else null end) as iphone,
+count(case when device='kindle fire' then device else null end) as kindle,
+count(case when device='lenovo thinkpad' then device else null end) as lenovo,
+count(case when device='macbook pro' or device='mac book air' or device='mac mini' then device else null end) as mac,
+count(case when device='windows surface' then device else null end) as microsoft,
+count(case when device='nexus 5' or device='nexus 7' or device='nexus 10' then device else null end) as nexus,
+count(case when device='nokia lumia 635' then device else null end) as nokia,
+count(case when device='samsung galaxy s4' or device='samsung galaxy note' or device='samsung galaxy tablet' then device else null end) as samsumg
+from b_events group by time_id,period_id order by time_id
+

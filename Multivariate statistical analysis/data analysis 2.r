@@ -115,8 +115,23 @@ boxplot(as.numeric(df3[,'TG'])~f,dfp)
 boxplot(as.numeric(df3[,'HDL-C'])~f,dfp)
 
 # (2)代谢综合征
-bmi=df[,6]/(df[,7]/100)^2
-bmi=as.matrix(bmi)
-df=as.matrix(df)
-df<-cbind(bmi,df)
-colnames(df)<-c("BMI","No","gender","age","sbp","dbp","weight","height","smoke","drunk","FPG","TG","HDL-C")
+df2<-df
+new<-matrix(FALSE,nrow(df2),1)
+df2<-cbind(df2,new)
+colnames(df2)<-c("BMI","No","gender","age","sbp","dbp","weight","height","smoke","drunk","FPG","TG","HDL-C","syn")
+# 添加一列描述是否有代谢综合症
+cond<-function(x){
+    i=0
+    if(as.numeric(x['BMI'])>=25.0) i=i+1
+    if(as.numeric(x['FPG'])>=6.1) i=i+1
+    if(as.numeric(x['sbp'])>=140||x['dbp']>=90) i=i+1
+    if(as.numeric(x['TG'])>=1.7||((x['HDL-C']<0.9&&x['gender']=='男')||(x['HDL-C']<1&&x['gender']=='女'))) i=i+1
+    
+    if(i>=3) return(TRUE)
+    else return(FALSE)
+}
+for(i in 1:nrow(df2)){
+    if(cond(df2[i,])){
+        df2[i,'syn']=TRUE
+    }
+}

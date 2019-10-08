@@ -113,6 +113,9 @@ boxplot(as.numeric(df3[,'BMI'])~f,dfp)
 boxplot(as.numeric(df3[,'FPG'])~f,dfp)
 boxplot(as.numeric(df3[,'TG'])~f,dfp)
 boxplot(as.numeric(df3[,'HDL-C'])~f,dfp)
+# sbp/dbp散点图
+library(ggplot2)
+ggplot(data.frame(df3), aes(sbp,dbp, colour=age)) + geom_point()#以颜色区分
 
 # (2)代谢综合征
 df2<-df
@@ -124,8 +127,8 @@ cond<-function(x){
     i=0
     if(as.numeric(x['BMI'])>=25.0) i=i+1
     if(as.numeric(x['FPG'])>=6.1) i=i+1
-    if(as.numeric(x['sbp'])>=140||x['dbp']>=90) i=i+1
-    if(as.numeric(x['TG'])>=1.7||((x['HDL-C']<0.9&&x['gender']=='男')||(x['HDL-C']<1&&x['gender']=='女'))) i=i+1
+    if(as.numeric(x['sbp'])>=140||as.numeric(x['dbp'])>=90) i=i+1
+    if(as.numeric(x['TG'])>=1.7||((as.numeric(x['HDL-C'])<0.9&&x['gender']=='男')||(as.numeric(x['HDL-C'])<1&&x['gender']=='女'))) i=i+1
     
     if(i>=3) return(TRUE)
     else return(FALSE)
@@ -135,3 +138,34 @@ for(i in 1:nrow(df2)){
         df2[i,'syn']=TRUE
     }
 }
+
+# 综合征与性别/抽烟/饮酒的关系
+male_synT<-nrow(df2[(df2[,'gender']=='男')&(df2[,'syn']==TRUE),])
+male_synF<-nrow(df2[(df2[,'gender']=='男')&(df2[,'syn']==FALSE),])
+female_synT<-nrow(df2[(df2[,'gender']=='女')&(df2[,'syn']==TRUE),])
+female_synF<-nrow(df2[(df2[,'gender']=='女')&(df2[,'syn']==FALSE),])
+cat("男性患者总数：",male_synT,"  男性非患者总数：",male_synF,"  男性患病率：",male_synT/(male_synT+male_synF),"\n")
+cat("女性患者总数：",female_synT,"  女性非患者总数：",female_synF,"  女性患病率：",female_synT/(female_synT+female_synF),"\n")
+# result:
+# 男性患者总数： 28   男性非患者总数： 129   男性患病率： 0.1783439 
+# 女性患者总数： 2   女性非患者总数： 84   女性患病率： 0.02325581 
+
+smokeT_synT<-nrow(df2[(df2[,'smoke']=='是')&(df2[,'syn']==TRUE),])
+smokeT_synF<-nrow(df2[(df2[,'smoke']=='是')&(df2[,'syn']==FALSE),])
+smokeF_synT<-nrow(df2[(df2[,'smoke']=='否')&(df2[,'syn']==TRUE),])
+smokeF_synF<-nrow(df2[(df2[,'smoke']=='否')&(df2[,'syn']==FALSE),])
+cat("吸烟患者总数：",smokeT_synT,"  吸烟非患者总数：",smokeT_synF,"  吸烟患病率：",smokeT_synT/(smokeT_synT+smokeT_synF),"\n")
+cat("不吸烟患者总数：",smokeF_synT,"  不吸烟非患者总数：",smokeF_synF,"  不吸烟患病率：",smokeF_synT/(smokeF_synT+smokeF_synF),"\n")
+# result:
+# 吸烟患者总数： 18   吸烟非患者总数： 98   吸烟患病率： 0.1551724 
+# 不吸烟患者总数： 16   不吸烟非患者总数： 163   不吸烟患病率： 0.08938547 
+
+drunkT_synT<-nrow(df2[(df2[,'drunk']=='是')&(df2[,'syn']==TRUE),])
+drunkT_synF<-nrow(df2[(df2[,'drunk']=='是')&(df2[,'syn']==FALSE),])
+drunkF_synT<-nrow(df2[(df2[,'drunk']=='无')&(df2[,'syn']==TRUE),])
+drunkF_synF<-nrow(df2[(df2[,'drunk']=='无')&(df2[,'syn']==FALSE),])
+cat("饮酒患者总数：",drunkT_synT,"  饮酒非患者总数：",drunkT_synF,"  饮酒患病率：",drunkT_synT/(drunkT_synT+drunkT_synF),"\n")
+cat("不饮酒患者总数：",drunkF_synT,"  不饮酒非患者总数：",drunkF_synF,"  不饮酒患病率：",drunkF_synT/(drunkF_synT+drunkF_synF),"\n")
+# result:
+# 饮酒患者总数： 22   饮酒非患者总数： 109   饮酒患病率： 0.1679389 
+# 不饮酒患者总数： 12   不饮酒非患者总数： 145   不饮酒患病率： 0.07643312 

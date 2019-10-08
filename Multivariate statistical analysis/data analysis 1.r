@@ -1,5 +1,5 @@
 library(openxlsx)
-data<-read.xlsx("C:/Users/Tinky/Desktop/公民素质.xlsx",1)
+df<-read.xlsx("C:/Users/Tinky/Desktop/公民素质.xlsx",1)
 maxmin<-data.frame(公民科学素质建设能力指数=c(100,0),科普人员能力指数=c(100,0),科普基础设施能力指数=c(100,0),科普经费能力指数=c(100,0),大众传媒能力指数=c(100,0),科学教育与培训能力指数=c(100,0))
 
 library(fmsb) 

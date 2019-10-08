@@ -1,3 +1,4 @@
+# 数据导入
 library(openxlsx)
 df=read.xlsx("C:/Users/Tinky/Desktop/sample.xlsx",2)
 # 数据探索
@@ -6,15 +7,12 @@ df_na<-apply(is.na(df), 2, sum) # 统计每列的缺失值
 
 # 每列单独拿出分析异常值
 df_age=apply(na.omit(df['age']),2,as.numeric)
-df_blood=apply(na.omit(df[,4:5]),2,as.numeric)
-                
+df_blood=apply(na.omit(df[,4:5]),2,as.numeric)                
 df_smoke=na.omit(df['smoke'])
 df_drunk=na.omit(df['drunk'])
-
 df_FPG=apply(df['FPG'],2,as.numeric)
 df_TG=apply(df['TG'],2,as.numeric)
 df_HDL_C=apply(df['HDL-C'],2,as.numeric)
-
 df_hw=na.omit(df[,6:7])
 df_hw=apply(df_hw,2,as.numeric)
 
@@ -60,7 +58,6 @@ colMeans(X) # 样本均值
 # dbp 75.9670781893004
 # TG 1.94674897119342
 # HDL-C 1.61028806584362
-
 var(X)*(nrow(X)-1)  # 样本离差阵
 # result:
 # 	    BMI	      FPG	        sbp	        dbp	      TG	    HDL-C
@@ -70,7 +67,6 @@ var(X)*(nrow(X)-1)  # 样本离差阵
 # dbp	3534.3029	744.57370	37595.26749	31527.7366	1329.33399	-114.84770
 # TG	485.9270	140.79784	1184.40016	1329.3340	558.64273	-42.02027
 # HDL-C	-96.6401	-16.48121	-94.77609	-114.8477	-42.02027	28.13188
-
 var(X)  # 样本协方差阵
 # result:
 #       BMI	      FPG	        sbp	        dbp	        TG	        HDL-C
@@ -80,7 +76,6 @@ var(X)  # 样本协方差阵
 # dbp	14.6045573	3.07675084	155.3523450	130.2799034	5.4931157	-0.47457725
 # TG	2.0079628	0.58180926	4.8942156	5.4931157	2.3084410	-0.17363749
 # HDL-C	-0.3993393	-0.06810416	-0.3916367	-0.4745773	-0.1736375	0.11624744
-
 cor(X)  # 样本相关阵
 # result：
 # 	  BMI	      FPG	      sbp	        dbp	        TG	      HDL-C
@@ -111,6 +106,13 @@ df3[df3[,'age']>70,'age']<-'>70'
 df3[(df3[,'age']>50 & df3[,'age']<=70),'age']<-'50-70'
 df3[(df3[,'age']>30 & df3[,'age']<=50),'age']<-'30-50'
 df3[(df3[,'age']<=30),'age']<-'<=30'
+# 按照年龄段为分类变量绘制箱型图
+f<-factor(df3[,'age'])
+dfp<-data.frame(df3,f)
+boxplot(as.numeric(df3[,'BMI'])~f,dfp)
+boxplot(as.numeric(df3[,'FPG'])~f,dfp)
+boxplot(as.numeric(df3[,'TG'])~f,dfp)
+boxplot(as.numeric(df3[,'HDL-C'])~f,dfp)
 
 # (2)代谢综合征
 bmi=df[,6]/(df[,7]/100)^2

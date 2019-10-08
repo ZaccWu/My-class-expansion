@@ -103,3 +103,4 @@ ks.test(X[,3], "pnorm", mean = mean(X[,3]), sd =  sqrt(X[,3]))
 # data:  X[, 3]
 # D = 0.14276, p-value = 9.992e-05
 # alternative hypothesis: two-sided
+# D值较大，p值很小，不符合正态分布

@@ -92,7 +92,7 @@ cor(X)  # 样本相关阵
 # HDL-C	-0.3496611	-0.2037898	-0.06781469	-0.1219485	-0.3351910	1.00000000
 
 
-# 是否服从正态分布
+# (5)是否服从正态分布
 ks.test(X[,2], "pnorm", mean = mean(X[,2]), sd =  sqrt(X[,2]))
 # result:
 # data:  X[, 2]
@@ -104,3 +104,17 @@ ks.test(X[,3], "pnorm", mean = mean(X[,3]), sd =  sqrt(X[,3]))
 # D = 0.14276, p-value = 9.992e-05
 # alternative hypothesis: two-sided
 # D值较大，p值很小，不符合正态分布
+
+# (3)年龄上的差异
+df3=df  # df3中年龄为分类变量
+df3[df3[,'age']>70,'age']<-'>70'
+df3[(df3[,'age']>50 & df3[,'age']<=70),'age']<-'50-70'
+df3[(df3[,'age']>30 & df3[,'age']<=50),'age']<-'30-50'
+df3[(df3[,'age']<=30),'age']<-'<=30'
+
+# (2)代谢综合征
+bmi=df[,6]/(df[,7]/100)^2
+bmi=as.matrix(bmi)
+df=as.matrix(df)
+df<-cbind(bmi,df)
+colnames(df)<-c("BMI","No","gender","age","sbp","dbp","weight","height","smoke","drunk","FPG","TG","HDL-C")

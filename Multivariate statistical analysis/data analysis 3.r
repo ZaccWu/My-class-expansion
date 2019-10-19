@@ -150,4 +150,4 @@ t.test(df2T[,'dbp'],df2F[,'dbp'],mu=mean(df2T[,'dbp'])-mean(df2F[,'dbp']),conf.l
 #  9.664766 17.258239
 # sample estimates:
 # mean of x mean of y 
- 87.76667  74.30516 
+# 87.76667  74.30516 

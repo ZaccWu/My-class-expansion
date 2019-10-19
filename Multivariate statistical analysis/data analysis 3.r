@@ -151,3 +151,44 @@ t.test(df2T[,'dbp'],df2F[,'dbp'],mu=mean(df2T[,'dbp'])-mean(df2F[,'dbp']),conf.l
 # sample estimates:
 # mean of x mean of y 
 # 87.76667  74.30516 
+
+
+# ex2.1数据集
+# 数据导入
+library(openxlsx)
+df=read.xlsx("C:/Users/Tinky/Desktop/ex2.1.xlsx",1)
+# 多元线性回归
+lm.sol=lm(y~x1+x2+x3+x4,data=df)
+summary(lm.sol)
+# result：
+# Call:
+# lm(formula = y ~ x1 + x2 + x3 + x4, data = df)
+# Residuals:
+#     Min      1Q  Median      3Q     Max 
+# -3.6268 -1.2004 -0.2276  1.5389  4.4467 
+# 
+# Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)  
+# (Intercept)   5.9433     2.8286   2.101   0.0473 *
+# x1            0.1424     0.3657   0.390   0.7006  
+# x2            0.3515     0.2042   1.721   0.0993 .
+# x3           -0.2706     0.1214  -2.229   0.0363 *
+# x4            0.6382     0.2433   2.623   0.0155 *
+# ---
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 2.01 on 22 degrees of freedom
+# Multiple R-squared:  0.6008,	Adjusted R-squared:  0.5282 
+# F-statistic: 8.278 on 4 and 22 DF,  p-value: 0.0003121
+
+# 多元正态性检验
+library(mvnormtest)
+S<-t(df[,2:5])
+shapiro.test(S)
+# Shapiro-Wilk normality test
+# data:  S
+# W = 0.97116, p-value = 0.01895
+
+# 独立性检验（看协方差矩阵）
+cor(df[,2:5])
+# 不等于零，所以不独立

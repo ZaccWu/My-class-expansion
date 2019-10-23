@@ -543,3 +543,7 @@ print('Input Table Header:{}\n'.format(train_data[0].table.header))
 print('Output Tokens:\n{}\n'.format(' '.join(query_tokenizer.tokenize(train_data[0])[0])))
 print('Output ids:')
 print('token_ids:{}\nsegment_ids:{}\nheader_ids:{}\n'.format(*query_tokenizer.encode(train_data[0])))
+'''
+可以看到，在output tokens中，问题前被加了[CLS]，table中列名的关键词被列出来并加了[SEP]和[unused..]token用来分类
+并且token、segment和header都拥有了自己的id
+'''

@@ -485,7 +485,7 @@ print(train_data[0].table.header) # 每个table都有表头
 
 
 
-# 【8】除去冗余字符及编码问题
+# 【8】定义几个我们需要用到的函数和模块
 def remove_brackets(s):
     '''
     函数功能：去除数据中的冗余字符，如括号
@@ -533,17 +533,66 @@ class QueryTokenizer(MultiSentenceTokenizer):
         segment_ids = [0] * len(token_ids)
         header_indices = np.cumsum(tokens_lens)
         return token_ids, segment_ids, header_indices[:-1]
+    
+class SqlLabelEncoder:
+    """
+    模块功能：将SQL对象转化为training labels.
+    """
+    def encode(self, sql: SQL, num_cols):
+        cond_conn_op_label = sql.cond_conn_op
         
+        sel_agg_label = np.ones(num_cols, dtype='int32') * len(SQL.agg_sql_dict)
+        for col_id, agg_op in zip(sql.sel, sql.agg):
+            if col_id < num_cols:
+                sel_agg_label[col_id] = agg_op
+            
+        cond_op_label = np.ones(num_cols, dtype='int32') * len(SQL.op_sql_dict)
+        for col_id, cond_op, _ in sql.conds:
+            if col_id < num_cols:
+                cond_op_label[col_id] = cond_op
+            
+        return cond_conn_op_label, sel_agg_label, cond_op_label
+    
+    def decode(self, cond_conn_op_label, sel_agg_label, cond_op_label):
+        cond_conn_op = int(cond_conn_op_label)
+        sel, agg, conds = [], [], []
+
+        for col_id, (agg_op, cond_op) in enumerate(zip(sel_agg_label, cond_op_label)):
+            if agg_op < len(SQL.agg_sql_dict):
+                sel.append(col_id)
+                agg.append(int(agg_op))
+            if cond_op < len(SQL.op_sql_dict):
+                conds.append([col_id, int(cond_op)])
+        return {
+            'sel': sel,
+            'agg': agg,
+            'cond_conn_op': cond_conn_op,
+            'conds': conds
+        }
+    
+    
+    
+# 【9】对query进行编码并查看结果
 token_dict = load_vocabulary(paths.vocab)
 query_tokenizer = QueryTokenizer(token_dict)
 
-# 查看给query编码的结果
 print('Input Question:{}'.format(train_data[0].question))
 print('Input Table Header:{}\n'.format(train_data[0].table.header))
 print('Output Tokens:\n{}\n'.format(' '.join(query_tokenizer.tokenize(train_data[0])[0])))
 print('Output ids:')
 print('token_ids:{}\nsegment_ids:{}\nheader_ids:{}\n'.format(*query_tokenizer.encode(train_data[0])))
-'''
-可以看到，在output tokens中，问题前被加了[CLS]，table中列名的关键词被列出来并加了[SEP]和[unused..]token用来分类
-并且token、segment和header都拥有了自己的id
-'''
+
+# 可以看到，在output tokens中，问题前被加了[CLS]，table中列名的关键词被列出来并加了[SEP]和[unused..]token用来分类
+# token、segment和header都拥有了自己的id
+
+
+
+# 【10】对SQL语句进行label encoder并查看结果
+label_encoder = SqlLabelEncoder()
+print("result of label encoder：")
+print(dict(train_data[0].sql))  # 输出编码后的结果
+# 显示编码的过程（以train_data第一个样本为例）
+print("\nencode and decode: ")
+print(label_encoder.encode(train_data[0].sql, num_cols=len(train_data[0].table.header)))
+print(label_encoder.decode(*label_encoder.encode(train_data[0].sql, num_cols=len(train_data[0].table.header))))
+# 可以看到我们已经将sql语句用整数进行了编码

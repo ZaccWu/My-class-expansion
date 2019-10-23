@@ -596,3 +596,141 @@ print("\nencode and decode: ")
 print(label_encoder.encode(train_data[0].sql, num_cols=len(train_data[0].table.header)))
 print(label_encoder.decode(*label_encoder.encode(train_data[0].sql, num_cols=len(train_data[0].table.header))))
 # 可以看到我们已经将sql语句用整数进行了编码
+
+
+
+# 【11】构造数据序列以训练模型
+class DataSequence(Sequence):
+    """
+    模块功能：训练数据的生成
+    """
+    def __init__(self, 
+                 data, 
+                 tokenizer, 
+                 label_encoder, 
+                 is_train=True, 
+                 max_len=160, 
+                 batch_size=32, 
+                 shuffle=True, 
+                 shuffle_header=True, 
+                 global_indices=None):
+        
+        self.data = data
+        self.batch_size = batch_size
+        self.tokenizer = tokenizer
+        self.label_encoder = label_encoder
+        self.shuffle = shuffle
+        self.shuffle_header = shuffle_header
+        self.is_train = is_train
+        self.max_len = max_len
+        
+        if global_indices is None:
+            self._global_indices = np.arange(len(data))
+        else:
+            self._global_indices = global_indices
+
+        if shuffle:
+            np.random.shuffle(self._global_indices)
+    
+    def _pad_sequences(self, seqs, max_len=None):
+        padded = pad_sequences(seqs, maxlen=None, padding='post', truncating='post')
+        if max_len is not None:
+            padded = padded[:, :max_len]
+        return padded
+    
+    def __getitem__(self, batch_id):
+        batch_data_indices = \
+            self._global_indices[batch_id * self.batch_size: (batch_id + 1) * self.batch_size]
+        batch_data = [self.data[i] for i in batch_data_indices]
+        
+        TOKEN_IDS, SEGMENT_IDS = [], []
+        HEADER_IDS, HEADER_MASK = [], []
+        
+        COND_CONN_OP = []
+        SEL_AGG = []
+        COND_OP = []
+        
+        for query in batch_data:
+            question = query.question.text
+            table = query.table
+            
+            col_orders = np.arange(len(table.header))
+            if self.shuffle_header:
+                np.random.shuffle(col_orders)
+            
+            token_ids, segment_ids, header_ids = self.tokenizer.encode(query, col_orders)
+            header_ids = [hid for hid in header_ids if hid < self.max_len]
+            header_mask = [1] * len(header_ids)
+            col_orders = col_orders[: len(header_ids)]
+            
+            TOKEN_IDS.append(token_ids)
+            SEGMENT_IDS.append(segment_ids)
+            HEADER_IDS.append(header_ids)
+            HEADER_MASK.append(header_mask)
+            
+            if not self.is_train:
+                continue
+            sql = query.sql
+            
+            cond_conn_op, sel_agg, cond_op = self.label_encoder.encode(sql, num_cols=len(table.header))
+            
+            sel_agg = sel_agg[col_orders]
+            cond_op = cond_op[col_orders]
+            
+            COND_CONN_OP.append(cond_conn_op)
+            SEL_AGG.append(sel_agg)
+            COND_OP.append(cond_op)
+            
+        TOKEN_IDS = self._pad_sequences(TOKEN_IDS, max_len=self.max_len)
+        SEGMENT_IDS = self._pad_sequences(SEGMENT_IDS, max_len=self.max_len)
+        HEADER_IDS = self._pad_sequences(HEADER_IDS)
+        HEADER_MASK = self._pad_sequences(HEADER_MASK)
+        
+        inputs = {
+            'input_token_ids': TOKEN_IDS,
+            'input_segment_ids': SEGMENT_IDS,
+            'input_header_ids': HEADER_IDS,
+            'input_header_mask': HEADER_MASK
+        }
+        
+        if self.is_train:
+            SEL_AGG = self._pad_sequences(SEL_AGG)
+            SEL_AGG = np.expand_dims(SEL_AGG, axis=-1)
+            COND_CONN_OP = np.expand_dims(COND_CONN_OP, axis=-1)
+            COND_OP = self._pad_sequences(COND_OP)
+            COND_OP = np.expand_dims(COND_OP, axis=-1)
+
+            outputs = {
+                'output_sel_agg': SEL_AGG,
+                'output_cond_conn_op': COND_CONN_OP,
+                'output_cond_op': COND_OP
+            }
+            return inputs, outputs
+        else:
+            return inputs
+    
+    def __len__(self):
+        return math.ceil(len(self.data) / self.batch_size)
+    
+    def on_epoch_end(self):
+        if self.shuffle:
+            np.random.shuffle(self._global_indices)
+            
+            
+  
+# 【12】查看编码的结果
+train_seq = DataSequence(train_data, query_tokenizer, label_encoder, shuffle=False, max_len=160, batch_size=2)
+# 这里train_seq是DataSequence类型长度为20761的数据
+sample_batch_inputs, sample_batch_outputs = train_seq[0]
+# 每一条数据都可以看做一个由各种属性的键值对组成的字典
+# 将字典中元素和其大小print出来
+for name, data in sample_batch_inputs.items():
+    print('{} : shape{}'.format(name, data.shape))
+    print(data)
+for name, data in sample_batch_outputs.items():
+    print('{} : shape{}'.format(name, data.shape))
+    print(data)
+# 可以看到，每条数据包含：
+# 2*57的input_token_ids，2*57的input_segment_ids
+# 2*4的input_header_ids，2*4的input_header_mask
+# 2*4*1的output_sel_agg，2*1的output_cond_conn_op，2*4*1的output_cond_op

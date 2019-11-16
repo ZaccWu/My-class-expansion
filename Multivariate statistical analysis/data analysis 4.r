@@ -37,6 +37,26 @@ X1<-cbind(g1['类别'],g1[3:9])
 X2<-cbind(g2['类别'],g2[3:9])
 Xtr<-rbind(X1,X2)
 
+library(mvnormtest)
+S<-t(Xtr[2:8])
+shapiro.test(S)
+
+# Shapiro-Wilk normality test
+# data:  S
+# W = 0.5525, p-value < 2.2e-16
+
+t.test(X1[2:8], X2[2:8])
+
+# Welch Two Sample t-test
+# data:  X1[2:8] and X2[2:8]
+# t = -0.21364, df = 197.48, p-value = 0.831
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -11.815723   9.505847
+# sample estimates:
+# mean of x mean of y 
+# 21.91500  23.06994 
+
 tgroup<-Xtr$'类别'
 tgroup<-as.factor(tgroup)
 wmd(Xtr[2:8],tgroup)

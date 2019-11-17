@@ -1,6 +1,6 @@
 This Repository is used to store the code of my after-class homework and some ideas that I went through during the classes.
 
-**Subjects included**
+**Subjects included**:
 
 * Numerical Computation
 
